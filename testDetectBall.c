@@ -1,7 +1,7 @@
 #pragma config(Sensor, in1,    sharpLeft,      sensorAnalog)
 #pragma config(Sensor, in2,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in3,    sharpTop,       sensorAnalog)
-#pragma config(Sensor, in4,    sharpBack,      sensorNone)
+#pragma config(Sensor, in4,    sharpBack,      sensorAnalog)
 #pragma config(Sensor, in5,    ir1,            sensorAnalog)
 #pragma config(Sensor, in6,    ir2,            sensorAnalog)
 #pragma config(Sensor, in7,    ir3,            sensorAnalog)
