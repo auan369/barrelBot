@@ -32,7 +32,6 @@
 #define NORTHWEST 7
 
 /*---------------------Global Variables-----------------------*/
-string console;
 int global_orientation;
 int sharpLeftVal;
 int sharpRightVal;
@@ -114,7 +113,7 @@ void move(int direction, int speedMode)
 
 }
 
-void rotate(int direction, int speedMode) //ccw =1 , cw =-1
+void rotate(int direction, int speedMode)
 {
 	int voltage;
 	if(speedMode==1)
@@ -237,67 +236,13 @@ void reverseDepositBall(){
 
 /*-------------------Default Functions END---------------------------------*/
 
-bool stage_of_search=0; //0 is looking, 1 is L sense & waiting, 2 is R sense & turning back, 3 is aligned
-
-void lookForBall(){
-
-	if (stage_of_search == 2){
-		if(time1[T1]>turnTime){
-			//ballfound = false;
-			move(1,1);
-			console = "forward";
-			stage_of_search = 3;
-		}
-		else{
-			rotate(1,1);
-		}
-	}
-
-	else{
-		//when left sensor nvr see yet
-		if (!leftSense){
-			motor[rightMotor]=50;
-			motor[leftMotor]=-50;
-			console = "lookB";
-
-			if (SensorValue[sharpLeft]>500){
-				console = "Lsense";
-				leftSense=true;
-				clearTimer(T1);
-			}
-		}
-
-		else{
-			console = "WaitR";
-			if (time1[T1]<5000){
-				if(SensorValue[sharpRight]>500)
-				{
-					console = "Rsense";
-					turnTime = time1[T1];
-					clearTimer(T1);
-					leftSense = false;
-					ballfound = true;
-				}
-			}
-			else{
-				leftSense = false;
-			}
-		}
-	}
-
-}
-
-
 task main()
 {
-	//backupLevel = BackupBatteryLevel;
-	//startTask(updateSensorState);
-	while(true){
-		varSysTimeOld = varSysTime;
-		lookForBall();
 
+	while(1){
+		read_orientation();
+		updateSensors();
+		reverseDepositBall();
 	}
-
-
 
 }

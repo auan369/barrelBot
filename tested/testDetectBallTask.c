@@ -43,24 +43,28 @@ void lookForBall(){
 	//rotate while looking
 	//if see ball left
 	if (ballfound){
-		motor[rightMotor]=-100;
-		motor[leftMotor]=100;
 
-		if(time1[T1]>turnTime/2){
-			ballfound = false;
+
+		if(time1[T1]>turnTime){
+			//ballfound = false;
+			console = "forward";
 			motor[rightMotor]=100;
-			motor[leftMotor]=-100;
+			motor[leftMotor]=100;
+		}
+		else{
+			motor[rightMotor]=-50;
+			motor[leftMotor]=50;
 		}
 	}
 
 	else{
 		//when left sensor nvr see yet
 		if (!leftSense){
-			motor[rightMotor]=100;
-			motor[leftMotor]=-100;
+			motor[rightMotor]=50;
+			motor[leftMotor]=-50;
 			console = "lookB";
 
-			if (SensorValue[sharpLeft]>300){
+			if (SensorValue[sharpLeft]>500){
 				console = "Lsense";
 				leftSense=true;
 				clearTimer(T1);
@@ -70,7 +74,7 @@ void lookForBall(){
 		else{
 			console = "WaitR";
 			if (time1[T1]<5000){
-				if(SensorValue[sharpRight]>300)
+				if(SensorValue[sharpRight]>500)
 				{
 					console = "Rsense";
 					turnTime = time1[T1];
