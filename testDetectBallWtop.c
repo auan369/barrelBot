@@ -241,12 +241,16 @@ int stage_of_search = 0; //0 is looking, 1 is L sense & waiting, 2 is R sense & 
 int turnTime = 0;
 int tempDist;
 void lookForBall(){
+	sharpLeftVal = SensorValue[sharpLeft];
+	sharpRightVal = SensorValue[sharpRight];
+	sharpTopVal = SensorValue[sharpTop];
+
 	switch(stage_of_search){
 	case 0://looking
 		rotate(-1,1);
 		if (SensorValue[sharpLeft]>500){
 			console = "Lsense";
-			stage_of_search = 1;
+			//stage_of_search = 1;
 			clearTimer(T1);
 			tempDist = SensorValue[sharpLeft];
 		}
@@ -270,7 +274,7 @@ void lookForBall(){
 			stage_of_search = 3;
 			clearTimer(T1);
 		}
-	case 3:
+	case 3: //move forward
 		move(1,1);
 		if (time1[T1]>5000){
 			stage_of_search = 0;

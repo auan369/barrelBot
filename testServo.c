@@ -13,8 +13,8 @@ task main()
 {
 
 	while(1){
-		test = SensorValue[ballLimit];
-
+		//test = SensorValue[ballLimit];
+		motor[barrelMotor]=127;
 		while(motor[barrelServo]<100)
 		{
 			motor[barrelServo]= motor[barrelServo]+1;
@@ -23,7 +23,7 @@ task main()
 		}
 		wait1Msec(1000);
 
-		while(motor[barrelServo]>-100)
+		while(motor[barrelServo]>-70)
 		{
 			motor[barrelServo]= motor[barrelServo]-1;
 			wait1Msec(10);

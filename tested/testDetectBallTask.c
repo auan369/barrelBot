@@ -74,7 +74,15 @@ void lookForBall(){
 		else{
 			console = "WaitR";
 			if (time1[T1]<5000){
-				if(SensorValue[sharpRight]>500)
+				if(SensorValue[sharpTop]>500){
+					leftSense = false;
+					ballfound = false;
+					clearTimer(T1);
+					console = "Tsense";
+					//break;
+				}
+
+				else if(SensorValue[sharpRight]>500)
 				{
 					console = "Rsense";
 					turnTime = time1[T1];

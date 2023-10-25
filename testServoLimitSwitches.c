@@ -214,21 +214,23 @@ void lineDetection(){
 
 
 void reverseDepositBall(){
-	if (SensorValue[rightLimit] && SensorValue[leftLimit]){
+	if (!(SensorValue[rightLimit] || SensorValue[leftLimit])){
 		move(-1,1);
 	}
 	else{
+
+		while(motor[barrelServo]>-70)
+		{
+			motor[barrelServo]= motor[barrelServo]-1;
+			wait1Msec(10);
+		}
+		wait1Msec(1000);
 		while(motor[barrelServo]<100)
 		{
 			motor[barrelServo]= motor[barrelServo]+1;
 			wait1Msec(10);
 		}
-		wait1Msec(2000);
-		while(motor[barrelServo]>-100)
-		{
-			motor[barrelServo]= motor[barrelServo]-1;
-			wait1Msec(10);
-		}
+
 	}
 
 }
