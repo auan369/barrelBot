@@ -11,7 +11,7 @@
 #pragma config(Sensor, dgtl5,  limit1,         sensorTouch)
 #pragma config(Sensor, dgtl6,  limit2,         sensorTouch)
 #pragma config(Sensor, dgtl7,  limit3,         sensorTouch)
-#pragma config(Sensor, dgtl8,  limit4,         sensorDigitalOut)
+#pragma config(Sensor, dgtl8,  limit4,         sensorTouch)
 #pragma config(Sensor, dgtl9,  compassWest,    sensorDigitalIn)
 #pragma config(Sensor, dgtl10, compassSouth,   sensorDigitalIn)
 #pragma config(Sensor, dgtl11, compassEast,    sensorDigitalIn)
@@ -100,15 +100,15 @@ task main()
 		sharpLeftVal = SensorValue[sharpLeft];
 		sharpRightVal= SensorValue[sharpRight];
 		sharpTopVal= SensorValue[sharpTop];
-		//sharpBackVal= SensorValue[sharpBack];
-		//ir1Val= SensorValue[ir1];
-		//ir2Val= SensorValue[ir2];
-		//ir3Val= SensorValue[ir3];
-		//ir4Val= SensorValue[ir4];
-		//limit1Val= SensorValue[limit1];
-		//limit2Val= SensorValue[limit2];
-		//limit3Val= SensorValue[limit3];
-		//limit4Val= SensorValue[limit4];
+		sharpBackVal= SensorValue[sharpBack];
+		ir1Val= SensorValue[ir1];
+		ir2Val= SensorValue[ir2];
+		ir3Val= SensorValue[ir3];
+		ir4Val= SensorValue[ir4];
+		limit1Val= SensorValue[limit1];
+		limit2Val= SensorValue[limit2];
+		limit3Val= SensorValue[limit3];
+		limit4Val= SensorValue[limit4];
 	}
 
 }

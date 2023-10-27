@@ -237,51 +237,48 @@ void reverseDepositBall(){
 
 /*-------------------Default Functions END---------------------------------*/
 
-bool stage_of_search=0; //0 is looking, 1 is L sense & waiting, 2 is R sense & turning back, 3 is aligned
-
+int stage_of_search = 0; //0 is looking, 1 is L sense & waiting, 2 is R sense & turning back, 3 is aligned
+int turnTime = 0;
+int tempDist;
 void lookForBall(){
+	sharpLeftVal = SensorValue[sharpLeft];
+	sharpRightVal = SensorValue[sharpRight];
+	sharpTopVal = SensorValue[sharpTop];
 
-	if (stage_of_search == 2){
-		if(time1[T1]>turnTime){
-			//ballfound = false;
-			move(1,1);
-			console = "forward";
+	switch(stage_of_search){
+	case 0://looking
+		rotate(-1,1);
+		if (SensorValue[sharpLeft]>1000){
+			console = "Lsense";
+			//stage_of_search = 1;
+			clearTimer(T1);
+			tempDist = SensorValue[sharpLeft];
+		}
+	case 1://L sensed & waiting for R sense
+		if (time1[T1]>5000){ //while within 5s of L sharp detecting stuff
+			stage_of_search = 0;
+		}
+		else if (SensorValue[sharpTop]>tempDist + 100){ //if top sensor senses sth
+			stage_of_search = 0;
+			console = "Tsense";
+		}
+		else if (SensorValue[sharpRight]>1000){
+			console = "Rsense";
+			stage_of_search = 2;
+			turnTime = time1[T1];
+			clearTimer(T1);
+		}
+	case 2: // L & R sense, reverse rotate
+		rotate(-1,1);
+		if (time1[T1]>turnTime){
 			stage_of_search = 3;
+			clearTimer(T1);
 		}
-		else{
-			rotate(1,1);
-		}
-	}
-
-	else{
-		//when left sensor nvr see yet
-		if (!leftSense){
-			motor[rightMotor]=50;
-			motor[leftMotor]=-50;
-			console = "lookB";
-
-			if (SensorValue[sharpLeft]>500){
-				console = "Lsense";
-				leftSense=true;
-				clearTimer(T1);
-			}
-		}
-
-		else{
-			console = "WaitR";
-			if (time1[T1]<5000){
-				if(SensorValue[sharpRight]>500)
-				{
-					console = "Rsense";
-					turnTime = time1[T1];
-					clearTimer(T1);
-					leftSense = false;
-					ballfound = true;
-				}
-			}
-			else{
-				leftSense = false;
-			}
+	case 3: //move forward
+		move(1,1);
+		if (time1[T1]>1000){
+			stage_of_search = 0;
+			clearTimer(T1);
 		}
 	}
 
@@ -293,7 +290,7 @@ task main()
 	//backupLevel = BackupBatteryLevel;
 	//startTask(updateSensorState);
 	while(true){
-		varSysTimeOld = varSysTime;
+
 		lookForBall();
 
 	}
