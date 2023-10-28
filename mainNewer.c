@@ -69,6 +69,7 @@ void resetServo();
 bool waitStart = true;
 bool alignedBase = false;
 bool ballInCage = false;
+bool moveForward = true;
 
 
 task main()
@@ -79,17 +80,38 @@ task main()
 		if (SensorValue[limitBall]==1){
 			updateSensors();
 			waitStart = false;
+			clearTimer(T2);
 		}
 	}
 
 	while(1){ //main code
+
 		lineDetection();
+		read_orientation();
 		if(ballInCage){
 			align_orientation_with_collection_and_return();
 		}
 		else{
-			lookForBall2();
+			if(moveForward){
+				if(time1[T2]>3000){
+					moveForward = false;
+					clearTimer(T2);
+				}
+				else{
+					move(1,3);
+				}
+			}
+			else{
+				if(global_orientation==0){
+					moveForward = true;
+					clearTimer(T2);
+				}
+				else{
+					lookForBall3();
+				}
+			}
 		}
+		
 	}
 }
 
@@ -248,18 +270,18 @@ void lookForBall(){
     }
 }
 
-void lookForBall2(){
-		sharpTopVal = SensorValue[sharpTop];
-		sharpLeftVal = SensorValue[sharpLeft];
-		sharpRightVal = SensorValue[sharpRight];
-		motor[barrelMotor] = 127;
-		if (SensorValue[ballLimit]==1){
-			ballInCage = true;
-			motor[barrelMotor] = 0;
-		}
-		else{
-			ballInCage = false;
-		}
+void lookForBall3(){
+	sharpTopVal = SensorValue[sharpTop];
+	sharpLeftVal = SensorValue[sharpLeft];
+	sharpRightVal = SensorValue[sharpRight];
+	motor[barrelMotor] = 127;
+	if (SensorValue[ballLimit]==1){
+		ballInCage = true;
+		motor[barrelMotor] = 0;
+	}
+	else{
+		ballInCage = false;
+	}
 
 
     if (stage_of_search == 0){
@@ -314,18 +336,30 @@ void lookForBall2(){
 			stage_of_search = 3;
 		}
 		else{
-			rotate(-1,1);
+			rotate(-1,2);
 		}
     }
-    else{
+    else if (stage_of_search == 3){
         if (time1[T1]<5000){
             move(1,3);
         }
         else{
             move(1,0);
-            stage_of_search = 0;
+			clearTimer(T1);		
+            stage_of_search = 4;
         }
     }
+	else{//stage of search = 4
+		if(time1[T1]>turnTime){
+			move(1,0);	
+            stage_of_search = 0;
+		}
+		else{
+			rotate(-1,2);
+		}
+
+
+	}
 
 
 
