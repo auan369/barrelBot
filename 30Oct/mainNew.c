@@ -76,7 +76,7 @@ task main()
 	//motor[barrelMotor] = 127;
 	resetServo();
 	while(waitStart){ //initialisation stage
-		if (SensorValue[limitBall]==1){
+		if (SensorValue[ballLimit]==1){
 			updateSensors();
 			waitStart = false;
 		}

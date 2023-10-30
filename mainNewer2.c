@@ -59,6 +59,7 @@ void move(int direction, int speedMode);
 void rotate(int direction, int speedMode);
 void lookForBall();
 void lookForBall2();
+void lookForBall3();
 void read_orientation();
 void align_orientation_with_collection_and_return();
 void updateSensors();
@@ -72,16 +73,17 @@ bool ballInCage = false;
 bool moveForward = true;
 
 
-task main()
-{
-	//motor[barrelMotor] = 127;
-	resetServo();
+void testMain(){
+    resetServo();
 	while(waitStart){ //initialisation stage
-		if (SensorValue[limitBall]==1){
-			updateSensors();
+		if (SensorValue[ballLimit]==1){
+			//updateSensors();
 			waitStart = false;
 			clearTimer(T2);
 		}
+        else{
+            updateSensors();
+        }
 	}
 
 	while(1){ //main code
@@ -111,8 +113,28 @@ task main()
 				}
 			}
 		}
-		
+
 	}
+}
+
+task main()
+{
+    while(1){
+        //complete the following functions in this order, fix each as per required
+
+
+        updateSensors();
+        // read_orientation();
+        // lineDetection();
+        // align_orientation_with_collection_and_return();
+        // lookForBall3();
+        // testMain();
+
+    }
+
+    //testMain();
+
+
 }
 
 
@@ -345,13 +367,13 @@ void lookForBall3(){
         }
         else{
             move(1,0);
-			clearTimer(T1);		
+			clearTimer(T1);
             stage_of_search = 4;
         }
     }
 	else{//stage of search = 4
 		if(time1[T1]>turnTime){
-			move(1,0);	
+			move(1,0);
             stage_of_search = 0;
 		}
 		else{
@@ -423,17 +445,19 @@ void updateSensors(){
 void lineDetection(){
 	irFLVal = SensorValue[irFL];
 	irFRVal = SensorValue[irFR];
-	if (SensorValue[irFL]<300 && SensorValue[irFR]<300)
-		{
-			move(1,0);
-			move(-1,1);
-			wait1Msec(1000);
-			rotate(-1,1);
-			wait1Msec(3000);
-			move(1,1);
-			//wait1Msec(1000);
-	}
-	else if (SensorValue[irFL]<300)
+	irBRVal = SensorValue[irBR];
+	irBLVal = SensorValue[irBL];
+	// if (SensorValue[irFL]<300 && SensorValue[irFR]<300)
+	// 	{
+	// 		move(1,0);
+	// 		move(-1,1);
+	// 		wait1Msec(1000);
+	// 		rotate(-1,1);
+	// 		wait1Msec(3000);
+	// 		move(1,1);
+	// 		//wait1Msec(1000);
+	// }
+	if (SensorValue[irFL]<300)
 		{
 			console	= "leftIR";
 			move(1,0);
@@ -457,6 +481,34 @@ void lineDetection(){
 			wait1Msec(1000);
 			move(1,0);
 	}
+    /*
+    else if (SensorValue[irBL]<300)
+		{
+			console	= "leftBackIR";
+			move(1,0);
+			move(1,1);
+			wait1Msec(1000);
+			rotate(1,1);
+			wait1Msec(1500);
+			move(-1,1);
+			wait1Msec(1000);
+			move(1,0);
+	}
+	else if (SensorValue[irBR]<300)
+		{
+			console	= "rightBackIR";
+			move(1,0);
+			move(1,1);
+			wait1Msec(1000);
+			rotate(-1,1);
+			wait1Msec(1500);
+			move(-1,1);
+			wait1Msec(1000);
+			move(1,0);
+	}
+    */
+
+
 }
 
 void releaseBall(){
