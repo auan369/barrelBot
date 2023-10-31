@@ -95,7 +95,7 @@ void testMain(){
 		}
 		else{
 			if(moveForward){
-				if(time1[T2]>3000){
+				if(time1[T2]>1000){
 					moveForward = false;
 					clearTimer(T2);
 				}
@@ -123,13 +123,22 @@ task main()
         //complete the following functions in this order, fix each as per required
 
 
-        updateSensors();
-        // read_orientation();
-        // lineDetection();
-        // align_orientation_with_collection_and_return();
-        // lookForBall3();
-        // testMain();
+        //updateSensors(); //works
+        //read_orientation(); //works
+        //lineDetection(); //works
+        //align_orientation_with_collection_and_return();//testing release ball
+				//resetServo();
+    		//lookForBall3();
+        testMain();
 
+    		//motor[barrelMotor]=127;
+    		/*
+    		if(SensorValue[ballLimit]==0)
+    		{
+    			resetServo();
+    		}
+    		else{releaseBall();}
+				*/
     }
 
     //testMain();
@@ -174,7 +183,7 @@ void rotate(int direction, int speedMode) //ccw =1 , cw =-1
 	int voltage;
 	if(speedMode==1)
 	{
-		voltage=50;
+		voltage=40;
 	}
 	else if(speedMode==2)
 	{
@@ -307,12 +316,12 @@ void lookForBall3(){
 
 
     if (stage_of_search == 0){
-        rotate(1,2);
+        rotate(1,1);
         //motor[rightMotor]=50;
         //motor[leftMotor]=-50;
         console = "lookB";
 
-        if (SensorValue[sharpLeft]>500 && (SensorValue[sharpLeft]-SensorValue[sharpRight])>100){
+        if (SensorValue[sharpLeft]>500 && (SensorValue[sharpLeft]-SensorValue[sharpRight])>200){
             console = "Lsense";
             stage_of_search = 1;
             sharpSense = SensorValue[sharpLeft];
@@ -325,14 +334,13 @@ void lookForBall3(){
         if (time1[T1]<3000){
             if(SensorValue[sharpTop]>sharpSense)
             {
-                clearTimer(T1);
-                //leftSense = false;
-                //ballfound = false;
-                console = "Tsense";
-                stage_of_search = 0;
+                //clearTimer(T1);
+
+                //console = "Tsense";
+                //stage_of_search = 0;
 
             }
-            else if(SensorValue[sharpRight]>500 && (SensorValue[sharpRight]-SensorValue[sharpLeft])>100)
+            else if(SensorValue[sharpRight]>500 && (SensorValue[sharpRight]-SensorValue[sharpLeft])>200)
             {
                 console = "Rsense";
                 turnTime = time1[T1];
@@ -358,7 +366,7 @@ void lookForBall3(){
 			stage_of_search = 3;
 		}
 		else{
-			rotate(-1,2);
+			rotate(-1,1);
 		}
     }
     else if (stage_of_search == 3){
@@ -377,7 +385,7 @@ void lookForBall3(){
             stage_of_search = 0;
 		}
 		else{
-			rotate(-1,2);
+			rotate(-1,1);
 		}
 
 
@@ -391,26 +399,27 @@ void lookForBall3(){
 
 void align_orientation_with_collection_and_return()
 {
-	//rotate to align the orientation with the collection place, rotates to North, when not 0
+	//rotate to align the orientation with the collection place, rotates to South, when not 4
     read_orientation();
+    resetServo();
 	if(global_orientation==7||global_orientation==6||global_orientation==5)
 	{//NW,W,SW
 		alignedBase = false;
-		rotate(-1,1);//CW
+		rotate(1,1);//CW
 
 	}
-	else if(global_orientation==1||global_orientation==2||global_orientation==3||global_orientation==4)
-	{//NE,E,SE,S
+	else if(global_orientation==1||global_orientation==2||global_orientation==3||global_orientation==0)
+	{//NE,E,SE,N
 		alignedBase = false;
-		rotate(1,1);//CCW
+		rotate(-1,1);//CCW
 
 	}
 
 	else{
 		move(-1,2);
 		alignedBase = true;
-		if(SensorValue[rightLimit]==1){ //if reach base
-			wait1Msec(1000); // reverse 1 second more
+		if(SensorValue[rightLimit]==1 || SensorValue[leftLimit]==1){ //if reach base
+			//wait1Msec(400); // reverse 1 second more
 			move(1,0);
 			releaseBall();
 
@@ -464,9 +473,9 @@ void lineDetection(){
 			move(-1,1);
 			wait1Msec(1000);
 			rotate(-1,1);
-			wait1Msec(1500);
-			move(1,1);
 			wait1Msec(1000);
+			move(1,1);
+			wait1Msec(500);
 			move(1,0);
 	}
 	else if (SensorValue[irFR]<300)
@@ -476,12 +485,13 @@ void lineDetection(){
 			move(-1,1);
 			wait1Msec(1000);
 			rotate(1,1);
-			wait1Msec(1500);
+			wait1Msec(1000);
 			move(1,1);
 			wait1Msec(1000);
 			move(1,0);
 	}
-    /*
+
+
     else if (SensorValue[irBL]<300)
 		{
 			console	= "leftBackIR";
@@ -489,7 +499,7 @@ void lineDetection(){
 			move(1,1);
 			wait1Msec(1000);
 			rotate(1,1);
-			wait1Msec(1500);
+			wait1Msec(1000);
 			move(-1,1);
 			wait1Msec(1000);
 			move(1,0);
@@ -501,27 +511,30 @@ void lineDetection(){
 			move(1,1);
 			wait1Msec(1000);
 			rotate(-1,1);
-			wait1Msec(1500);
+			wait1Msec(1000);
 			move(-1,1);
 			wait1Msec(1000);
 			move(1,0);
 	}
-    */
+	//else{
+	//	move(-1,1);
+	//}
+
 
 
 }
 
 void releaseBall(){
-	while(motor[barrelServo]>-70)
+	while(motor[barrelServo]>-90)
 	{
 		motor[barrelServo]= motor[barrelServo]-1;
-		wait1Msec(10);
+		wait1Msec(5);
 	}
 	wait1Msec(2000);
 }
 
 void resetServo(){
-	while(motor[barrelServo]<100)
+	while(motor[barrelServo]<60)
 	{
 		motor[barrelServo]= motor[barrelServo]+1;
 		wait1Msec(10);
