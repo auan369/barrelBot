@@ -53,6 +53,8 @@ int compassWestVal;
 int compassEastVal;
 int compassNorthVal;
 int compassSouthVal;
+int ccwOrCw = 1; //1 is cw, -1 is ccw
+bool justStart = true;
 /*-------------------Default Function Declration---------------------------------*/
 
 void move(int direction, int speedMode);
@@ -64,17 +66,19 @@ void read_orientation();
 void align_orientation_with_collection_and_return();
 void updateSensors();
 void lineDetection();
+void lineDetectionRear();
 void releaseBall();
 void resetServo();
+void enemyDetect();
 /*-------------------State Variables---------------------------------*/
 bool waitStart = true;
 bool alignedBase = false;
 bool ballInCage = false;
-bool moveForward = true;
+bool moveForward = false;
 
 
 void testMain(){
-    resetServo();
+	resetServo();
 	while(waitStart){ //initialisation stage
 		if (SensorValue[ballLimit]==1){
 			//updateSensors();
@@ -87,15 +91,26 @@ void testMain(){
 	}
 
 	while(1){ //main code
-
 		lineDetection();
 		read_orientation();
-		if(ballInCage){
+		enemyDetect();
+		if(justStart){
+			if(time1[T2]<5000){
+				move(1,3);
+				lineDetection();
+			}
+			else{
+				justStart = false;
+				clearTimer(T2);
+			}
+		}
+		else if(ballInCage){
 			align_orientation_with_collection_and_return();
+			lineDetectionRear();
 		}
 		else{
 			if(moveForward){
-				if(time1[T2]>1000){
+				if(time1[T2]>3000){
 					moveForward = false;
 					clearTimer(T2);
 				}
@@ -104,13 +119,16 @@ void testMain(){
 				}
 			}
 			else{
-				if(global_orientation==0){
+
+				if(time1[T2]>6000){
 					moveForward = true;
 					clearTimer(T2);
 				}
 				else{
 					lookForBall3();
 				}
+
+				//lookForBall3();
 			}
 		}
 
@@ -122,7 +140,7 @@ task main()
     while(1){
         //complete the following functions in this order, fix each as per required
 
-
+		//lookForBall3();
         //updateSensors(); //works
         //read_orientation(); //works
         //lineDetection(); //works
@@ -316,7 +334,7 @@ void lookForBall3(){
 
 
     if (stage_of_search == 0){
-        rotate(1,1);
+        rotate(1*ccwOrCw,1);
         //motor[rightMotor]=50;
         //motor[leftMotor]=-50;
         console = "lookB";
@@ -366,26 +384,28 @@ void lookForBall3(){
 			stage_of_search = 3;
 		}
 		else{
-			rotate(-1,1);
+			rotate(-1*ccwOrCw,1);
 		}
     }
     else if (stage_of_search == 3){
-        if (time1[T1]<5000){
+        if (time1[T1]<3000){
             move(1,3);
         }
         else{
             move(1,0);
 			clearTimer(T1);
+			clearTimer(T2);
             stage_of_search = 4;
         }
     }
 	else{//stage of search = 4
-		if(time1[T1]>turnTime){
+		clearTimer(T2);
+		if(time1[T1]>turnTime*1.5){
 			move(1,0);
             stage_of_search = 0;
 		}
 		else{
-			rotate(-1,1);
+			rotate(-1*ccwOrCw,1);
 		}
 
 
@@ -425,7 +445,10 @@ void align_orientation_with_collection_and_return()
 
 			resetServo();
 			ballInCage = false;
+
+			justStart = true;
 			wait1Msec(1000);
+			clearTimer(T2);
 		}
 
 
@@ -451,6 +474,7 @@ void updateSensors(){
 	topLimitVal= SensorValue[topLimit];
 }
 
+
 void lineDetection(){
 	irFLVal = SensorValue[irFL];
 	irFRVal = SensorValue[irFR];
@@ -469,9 +493,10 @@ void lineDetection(){
 	if (SensorValue[irFL]<300)
 		{
 			console	= "leftIR";
+			ccwOrCw = -1;
 			move(1,0);
 			move(-1,1);
-			wait1Msec(1000);
+			wait1Msec(2000);
 			rotate(-1,1);
 			wait1Msec(1000);
 			move(1,1);
@@ -481,18 +506,22 @@ void lineDetection(){
 	else if (SensorValue[irFR]<300)
 		{
 			console	= "rightIR";
+			ccwOrCw = 1;
 			move(1,0);
 			move(-1,1);
-			wait1Msec(1000);
+			wait1Msec(2000);
 			rotate(1,1);
 			wait1Msec(1000);
 			move(1,1);
 			wait1Msec(1000);
 			move(1,0);
 	}
-
-
-    else if (SensorValue[irBL]<300)
+	//else{
+	//	move(-1,1);
+	//}
+}
+void lineDetectionRear(){
+	  if (SensorValue[irBL]<300)
 		{
 			console	= "leftBackIR";
 			move(1,0);
@@ -516,21 +545,17 @@ void lineDetection(){
 			wait1Msec(1000);
 			move(1,0);
 	}
-	//else{
-	//	move(-1,1);
-	//}
-
-
-
 }
 
 void releaseBall(){
+	motor[barrelMotor]=127;
 	while(motor[barrelServo]>-90)
 	{
 		motor[barrelServo]= motor[barrelServo]-1;
 		wait1Msec(5);
 	}
-	wait1Msec(2000);
+	wait1Msec(1300);
+	motor[barrelMotor]=0;
 }
 
 void resetServo(){
@@ -541,4 +566,10 @@ void resetServo(){
 
 	}
 	wait1Msec(500);
+}
+
+void enemyDetect(){
+	if (SensorValue[sharpTop]>1500 || SensorValue[sharpBack]>1500 || (SensorValue[sharpLeft]>1500 && SensorValue[sharpRight]>1500)){
+		move(1,0);
+	}
 }
