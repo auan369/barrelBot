@@ -145,9 +145,11 @@ void testMain(){
 			}
 		}
 		else if(ballInCage){
-			lineDetectionRear();
-			enemyDetectRear();
 			align_orientation_with_collection_and_return();
+			if(!justStart){ //to prevent this from running after ball deposited
+				lineDetectionRear();
+				enemyDetectRear();
+			}
 		}
 		else{
 			if(moveForward){
