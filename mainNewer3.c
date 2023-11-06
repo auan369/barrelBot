@@ -2,8 +2,8 @@
 #pragma config(Sensor, in2,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in3,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, in4,    sharpBack,      sensorAnalog)
-#pragma config(Sensor, in5,    irFL,           sensorAnalog)
-#pragma config(Sensor, in6,    irFR,           sensorAnalog)
+#pragma config(Sensor, in5,    irFR,           sensorAnalog)
+#pragma config(Sensor, in6,    irFL,           sensorAnalog)
 #pragma config(Sensor, in7,    irBL,           sensorAnalog)
 #pragma config(Sensor, in8,    irBR,           sensorAnalog)
 #pragma config(Sensor, dgtl1,  ,               sensorQuadEncoder)
@@ -117,7 +117,7 @@ void testMain(){
 			ccwOrCw = -1;
 		}
 		else if(SensorValue[rightLimit]==1){ //decide which way to turn based on start pos
-			ccwOrCw = 1;	
+			ccwOrCw = 1;
 		}
 
 		if (SensorValue[ballLimit]==1){
@@ -448,7 +448,7 @@ void align_orientation_with_collection_and_return()
 	}
 
 	else{
-		move(-1,2);
+		move(-1,3);
 		alignedBase = true;
 		if(SensorValue[rightLimit]==1 || SensorValue[leftLimit]==1){ //if reach base
 			//wait1Msec(400); // reverse 1 second more
@@ -508,7 +508,7 @@ void lineDetection(){
 			ccwOrCw = -1;
 			move(1,0);
 			move(-1,1);
-			wait1Msec(2000);
+			wait1Msec(3000);
 			rotate(-1,1);
 			wait1Msec(1000);
 			move(1,1);
@@ -521,7 +521,7 @@ void lineDetection(){
 			ccwOrCw = 1;
 			move(1,0);
 			move(-1,1);
-			wait1Msec(2000);
+			wait1Msec(3000);
 			rotate(1,1);
 			wait1Msec(1000);
 			move(1,1);
@@ -538,7 +538,7 @@ void lineDetectionRear(){
 			console	= "leftBackIR";
 			move(1,0);
 			move(1,1);
-			wait1Msec(1000);
+			wait1Msec(3000);
 			rotate(1,1);
 			wait1Msec(1000);
 			move(-1,1);
@@ -550,7 +550,7 @@ void lineDetectionRear(){
 			console	= "rightBackIR";
 			move(1,0);
 			move(1,1);
-			wait1Msec(1000);
+			wait1Msec(3000);
 			rotate(-1,1);
 			wait1Msec(1000);
 			move(-1,1);
@@ -617,7 +617,7 @@ void enemyDetectFront(){
 		move(1,0);
 		enemyDetected = 0;
 		clearTimer(T3);
-		
+
 	}
 
 }
@@ -659,14 +659,14 @@ void enemyDetectRear(){
 		move(1,0);
 		enemyDetected = 0;
 		clearTimer(T3);
-		
+
 	}
 
 }
 
 /*
-		
-		
+
+
 
 */
 
@@ -675,7 +675,7 @@ void enemyDetectFront(){
 	if (SensorValue[sharpTop]>1500 || (SensorValue[sharpLeft]>1500 && SensorValue[sharpRight]>1500)){
 		move(1,0);
 		clearTimer(T3);
-		
+
 	}
 }
 */
