@@ -93,8 +93,8 @@ task main()
         //align_orientation_with_collection_and_return();//testing release ball
 				//resetServo();
     	//lookForBall3();
-				lookForBall4();
-        //testMain();
+		//		lookForBall4();
+        testMain();
 
     		//motor[barrelMotor]=127;
     		/*
@@ -464,7 +464,7 @@ void lookForBall4(){
 		else{
 			if (SensorValue[sharpRight]>500 && (SensorValue[sharpRight]-SensorValue[sharpLeft])>200){
 				console = "Lsense";
-				wait1Msec(300);
+				wait1Msec(150);
 				stage_of_search = 3;
 				sharpSense = SensorValue[sharpLeft];
 				//leftSense=true;
