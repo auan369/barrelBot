@@ -11,3 +11,5 @@ mainNewer6_1716working.c implemented rotate and move forward if face back to hom
 mainNewer6.c implemented faster rotating speed for search
 
 mainNewer6_ModifiedLook3and4.c fixed CW rotate for lookforball3 and faster rotating speed for both 3 and 4 search
+
+mainNewer7SouthCheck.c is final
