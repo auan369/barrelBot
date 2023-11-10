@@ -52,6 +52,7 @@ int compassWestVal;
 int compassEastVal;
 int compassNorthVal;
 int compassSouthVal;
+int search_orientation;
 
 /*-------------------Default Function Declration---------------------------------*/
 
@@ -78,6 +79,7 @@ int stage_of_search = 0;
 int ccwOrCw = 1; //1 is cw, -1 is ccw
 bool justStart = true;
 int enemyDetected = 0; // 1 is enemy front, 0 is no enemy, -1 is enemy back
+bool startingTurn = true;
 
 
 
@@ -135,9 +137,9 @@ void testMain(){
 	while(1){ //main code
 		lineDetection();
 		read_orientation();
-		enemyDetectFront();
+		//enemyDetectFront();
 		if(justStart){
-			if(time1[T2]<5000){
+			if(time1[T2]<6500){
 				move(1,3);
 				lineDetection();
 			}
@@ -159,17 +161,25 @@ void testMain(){
 					move(1,3);
 				}
 			}
-			else{
+			else if (startingTurn){
 				read_orientation();
-				if(global_orientation==0){
-					rotate(1,3);
-					wait1Msec(2000);
+				search_orientation = global_orientation;
+				startingTurn = false;
+				clearTimer(T3);
+
+			}
+			else{
+				lookForBall3();
+				read_orientation();
+
+				if(global_orientation==search_orientation && time1[T3]>5000){
+					//rotate(1,3);
+					//wait1Msec(850);
 					moveForward = true;
+					startingTurn = true;
 					clearTimer(T2);
 				}
-				else{
-					lookForBall3();
-				}
+
 
 				//lookForBall3();
 			}
@@ -217,7 +227,7 @@ void rotate(int direction, int speedMode) //ccw =1 , cw =-1
 	}
 	else if(speedMode==2)
 	{
-		voltage=70;
+		voltage=55;
 	}
 	else if(speedMode==3)
 	{
@@ -600,7 +610,7 @@ void align_orientation_with_collection_and_return()
 		else{
 			if(!justStart){ //to prevent this from running after ball deposited
 				lineDetectionRear();
-				enemyDetectRear();
+				//enemyDetectRear();
 			}
 		}
 
@@ -676,33 +686,69 @@ void lineDetection(){
 	irFRVal = SensorValue[irFR];
 	irBRVal = SensorValue[irBR];
 	irBLVal = SensorValue[irBL];
+	read_orientation();
 	if (SensorValue[irFL]<300)
 		{
-			console	= "leftIR";
-			ccwOrCw = -1;
-			move(1,0);
-			move(-1,3);
-			wait1Msec(1000);
-			rotate(-1,3);
-			wait1Msec(1000);
-			move(1,3);
-			wait1Msec(1000);
-			move(1,0);
-			//clearTimer(T2);
+			if (global_orientation==0){
+				console	= "leftIR";
+				//ccwOrCw = -1;
+				move(1,0);
+				wait1Msec(100);
+				move(-1,3);
+				wait1Msec(500);
+				rotate(-1,3);
+				wait1Msec(1800);
+				//move(1,3);
+				moveForward=false;
+				clearTimer(T2);
+				justStart=true;
+			}
+
+			else{
+				console	= "leftIR";
+				//ccwOrCw = -1;
+				move(1,0);
+				wait1Msec(100);
+				move(-1,3);
+				wait1Msec(500);
+				rotate(-1,3);
+				wait1Msec(800);
+				move(1,3);
+				wait1Msec(1000);
+				move(1,0);
+				//clearTimer(T2);
+		}
 	}
 	else if (SensorValue[irFR]<300)
 		{
-			console	= "rightIR";
-			ccwOrCw = 1;
-			move(1,0);
-			move(-1,3);
-			wait1Msec(1000);
-			rotate(1,3);
-			wait1Msec(1000);
-			move(1,3);
-			wait1Msec(1000);
-			move(1,0);
-			//clearTimer(T2);
+			if(global_orientation==0){
+				console	= "righttIR";
+				//ccwOrCw = -1;
+				move(1,0);
+				wait1Msec(100);
+				move(-1,3);
+				wait1Msec(500);
+				rotate(1,3);
+				wait1Msec(1800);
+				//move(1,3);
+				moveForward=false;
+				clearTimer(T2);
+				justStart=true;
+			}
+			else{
+				console	= "rightIR";
+				//ccwOrCw = 1;
+				move(1,0);
+				wait1Msec(100);
+				move(-1,3);
+				wait1Msec(500);
+				rotate(1,3);
+				wait1Msec(800);
+				move(1,3);
+				wait1Msec(1000);
+				move(1,0);
+				//clearTimer(T2);
+			}
 	}
 	//else{
 	//	move(-1,1);
@@ -714,9 +760,9 @@ void lineDetectionRear(){
 			console	= "leftBackIR";
 			move(1,0);
 			move(1,3);
-			wait1Msec(1000);
+			wait1Msec(500);
 			rotate(1,3);
-			wait1Msec(1000);
+			wait1Msec(500);
 			move(-1,3);
 			wait1Msec(1000);
 			move(1,0);
@@ -726,9 +772,9 @@ void lineDetectionRear(){
 			console	= "rightBackIR";
 			move(1,0);
 			move(1,3);
-			wait1Msec(1000);
+			wait1Msec(500);
 			rotate(-1,3);
-			wait1Msec(1000);
+			wait1Msec(500);
 			move(-1,3);
 			wait1Msec(1000);
 			move(1,0);

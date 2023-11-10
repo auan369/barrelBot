@@ -52,6 +52,7 @@ int compassWestVal;
 int compassEastVal;
 int compassNorthVal;
 int compassSouthVal;
+int search_orientation;
 
 /*-------------------Default Function Declration---------------------------------*/
 
@@ -78,6 +79,7 @@ int stage_of_search = 0;
 int ccwOrCw = 1; //1 is cw, -1 is ccw
 bool justStart = true;
 int enemyDetected = 0; // 1 is enemy front, 0 is no enemy, -1 is enemy back
+bool startingTurn = true;
 
 
 
@@ -135,7 +137,7 @@ void testMain(){
 	while(1){ //main code
 		lineDetection();
 		read_orientation();
-		enemyDetectFront();
+		//enemyDetectFront();
 		if(justStart){
 			if(time1[T2]<5000){
 				move(1,3);
@@ -159,17 +161,25 @@ void testMain(){
 					move(1,3);
 				}
 			}
-			else{
+			else if (startingTurn){
 				read_orientation();
-				if(global_orientation==0){
-					rotate(1,3);
-					wait1Msec(2000);
+				search_orientation = global_orientation;
+				startingTurn = false;
+				clearTimer(T3);
+
+			}
+			else{
+				lookForBall3();
+				read_orientation();
+
+				if(global_orientation==search_orientation && time1[T3]>5000){
+					//rotate(1,3);
+					//wait1Msec(850);
 					moveForward = true;
+					startingTurn = true;
 					clearTimer(T2);
 				}
-				else{
-					lookForBall3();
-				}
+
 
 				//lookForBall3();
 			}
@@ -600,7 +610,7 @@ void align_orientation_with_collection_and_return()
 		else{
 			if(!justStart){ //to prevent this from running after ball deposited
 				lineDetectionRear();
-				enemyDetectRear();
+				//enemyDetectRear();
 			}
 		}
 
@@ -679,7 +689,7 @@ void lineDetection(){
 	if (SensorValue[irFL]<300)
 		{
 			console	= "leftIR";
-			ccwOrCw = -1;
+			//ccwOrCw = -1;
 			move(1,0);
 			move(-1,3);
 			wait1Msec(1000);
@@ -693,7 +703,7 @@ void lineDetection(){
 	else if (SensorValue[irFR]<300)
 		{
 			console	= "rightIR";
-			ccwOrCw = 1;
+			//ccwOrCw = 1;
 			move(1,0);
 			move(-1,3);
 			wait1Msec(1000);
